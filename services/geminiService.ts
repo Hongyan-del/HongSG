@@ -2,6 +2,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BirthInfo, FateReport } from "../types";
 
+// 偵錯顯示：如果環境變數缺失，則輸出指定錯誤
+if (!process.env.API_KEY) {
+  console.error("未偵測到環境變數，請檢查 Netlify 設定。");
+}
+
 /**
  * 根據使用者輸入產生唯一的整數種子值
  */
@@ -18,6 +23,7 @@ const generateSeedFromInfo = (info: BirthInfo): number => {
 
 export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport> => {
   // 遵循規範：直接使用 process.env.API_KEY 初始化
+  // 注意：SDK 規定必須使用 { apiKey: ... } 具名參數
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
   const seed = generateSeedFromInfo(info);
   
