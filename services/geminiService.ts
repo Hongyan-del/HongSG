@@ -2,7 +2,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BirthInfo, FateReport } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+// We use a type assertion to string because process.env might not be fully typed in the global scope.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
 /**
  * 根據使用者輸入產生唯一的整數種子值
@@ -91,37 +93,29 @@ export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport
     }
   });
 
-  return JSON.parse(response.text);
+  // Property .text returns the extracted string output.
+  const jsonStr = response.text || "{}";
+  return JSON.parse(jsonStr);
 };
 
-/**
- * 針對使用者的提問，根據命盤資料給予白話文解釋
- */
 export const askFollowUpQuestion = async (info: BirthInfo, report: FateReport, question: string): Promise<string> => {
   const prompt = `
     你是一位溫和且專業的命理大師，現在要為使用者「${info.name}」解惑。
-    
     使用者的命盤摘要如下：
     - 八字日主：${report.bazi.dayMaster}
     - 整體運勢評語：${report.overallFortune}
-    - 財運：${report.wealthLuck}
-    - 事業：${report.careerLuck}
-    - 感情：${report.loveLuck}
-    
     使用者的提問是：「${question}」
-    
-    請根據上述命盤資訊，以「親切、易懂、白話文」的方式回答使用者的問題。
-    不要使用過多深奧的術語，要像是在與老朋友聊天一樣，提供實質的建議與心靈上的啟發。
-    字數約在 150-250 字之間。
+    請以親切、易懂、白話文的方式回答。字數約 150-250 字。
   `;
 
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
-      temperature: 0.7, // 稍微增加一點靈活性，讓語氣更自然
+      temperature: 0.7,
     },
   });
 
+  // Property .text returns the extracted string output.
   return response.text || "天機混亂，請再試一次。";
 };
