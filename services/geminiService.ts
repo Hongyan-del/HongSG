@@ -2,11 +2,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BirthInfo, FateReport } from "../types";
 
-// 偵錯顯示：如果環境變數缺失，則輸出指定錯誤
-if (!process.env.API_KEY) {
-  console.error("未偵測到環境變數，請檢查 Netlify 設定。");
-}
-
 /**
  * 根據使用者輸入產生唯一的整數種子值
  */
@@ -22,9 +17,8 @@ const generateSeedFromInfo = (info: BirthInfo): number => {
 };
 
 export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport> => {
-  // 遵循規範：直接使用 process.env.API_KEY 初始化
-  // 注意：SDK 規定必須使用 { apiKey: ... } 具名參數
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  // Use process.env.API_KEY directly and initialize inside function call
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const seed = generateSeedFromInfo(info);
   
   const prompt = `你是一位精通八字算命與紫微斗數的東方命理大師。
@@ -97,11 +91,13 @@ export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport
     }
   });
 
+  // response.text is a property
   return JSON.parse(response.text || "{}");
 };
 
 export const askFollowUpQuestion = async (info: BirthInfo, report: FateReport, question: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  // Use process.env.API_KEY directly and initialize inside function call
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const prompt = `
     你是一位溫和且專業的命理大師，現在要為使用者「${info.name}」解惑。
@@ -120,5 +116,6 @@ export const askFollowUpQuestion = async (info: BirthInfo, report: FateReport, q
     },
   });
 
+  // response.text is a property
   return response.text || "天機混亂，請再試一次。";
 };
