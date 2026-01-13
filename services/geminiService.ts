@@ -17,13 +17,8 @@ const generateSeedFromInfo = (info: BirthInfo): number => {
 };
 
 export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport> => {
-  // 必須在函式執行時初始化，確保讀取到最新的環境變數
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key 尚未配置，請檢查環境設定。");
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
+  // 遵循規範：直接使用 process.env.API_KEY 初始化
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
   const seed = generateSeedFromInfo(info);
   
   const prompt = `你是一位精通八字算命與紫微斗數的東方命理大師。
@@ -100,12 +95,7 @@ export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport
 };
 
 export const askFollowUpQuestion = async (info: BirthInfo, report: FateReport, question: string): Promise<string> => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key 尚未配置。");
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
   
   const prompt = `
     你是一位溫和且專業的命理大師，現在要為使用者「${info.name}」解惑。
