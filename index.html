@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玄機天啟 - 命理探源</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background-color: #0c0a09;
+            color: #d4d4d8;
+            overflow-x: hidden;
+        }
+        .parchment {
+            background-color: #f5f5dc;
+            background-image: url("https://www.transparenttextures.com/patterns/p6.png");
+        }
+        .chinese-border {
+            border: 12px double #854d0e;
+            padding: 20px;
+            position: relative;
+        }
+        .chinese-border::before {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: -15px;
+          right: -15px;
+          bottom: -15px;
+          border: 1px solid #854d0e;
+          pointer-events: none;
+        }
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
+        }
+        .float { animation: float 4s ease-in-out infinite; }
+        
+        /* Mysterious Background Animations */
+        @keyframes smokeDrift {
+          0% { transform: translate(-10%, -10%) scale(1); opacity: 0.2; }
+          50% { transform: translate(10%, 5%) scale(1.1); opacity: 0.4; }
+          100% { transform: translate(-10%, -10%) scale(1); opacity: 0.2; }
+        }
+        .animate-smoke {
+          animation: smokeDrift 15s ease-in-out infinite;
+          filter: blur(40px);
+        }
+
+        @keyframes particleRise {
+          0% { transform: translateY(100%) translateX(0); opacity: 0; }
+          50% { opacity: 0.5; }
+          100% { transform: translateY(-100%) translateX(20px); opacity: 0; }
+        }
+        .particle {
+          position: absolute;
+          background: currentColor;
+          border-radius: 50%;
+          pointer-events: none;
+          animation: particleRise var(--duration) linear infinite;
+          opacity: 0;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
