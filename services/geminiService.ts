@@ -2,10 +2,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BirthInfo, FateReport } from "../types";
 
-// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-// We use a type assertion to string because process.env might not be fully typed in the global scope.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-
 /**
  * 根據使用者輸入產生唯一的整數種子值
  */
@@ -21,6 +17,13 @@ const generateSeedFromInfo = (info: BirthInfo): number => {
 };
 
 export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport> => {
+  // 必須在函式執行時初始化，確保讀取到最新的環境變數
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API Key 尚未配置，請檢查環境設定。");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   const seed = generateSeedFromInfo(info);
   
   const prompt = `你是一位精通八字算命與紫微斗數的東方命理大師。
@@ -93,12 +96,17 @@ export const getFateInterpretation = async (info: BirthInfo): Promise<FateReport
     }
   });
 
-  // Property .text returns the extracted string output.
-  const jsonStr = response.text || "{}";
-  return JSON.parse(jsonStr);
+  return JSON.parse(response.text || "{}");
 };
 
 export const askFollowUpQuestion = async (info: BirthInfo, report: FateReport, question: string): Promise<string> => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API Key 尚未配置。");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+  
   const prompt = `
     你是一位溫和且專業的命理大師，現在要為使用者「${info.name}」解惑。
     使用者的命盤摘要如下：
@@ -116,6 +124,5 @@ export const askFollowUpQuestion = async (info: BirthInfo, report: FateReport, q
     },
   });
 
-  // Property .text returns the extracted string output.
   return response.text || "天機混亂，請再試一次。";
 };
